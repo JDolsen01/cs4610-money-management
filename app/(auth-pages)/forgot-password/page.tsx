@@ -60,7 +60,7 @@ export default async function ForgotPassword(props: {
         <CardFooter className="flex flex-col">
           <div className="text-center text-sm text-muted-foreground">
             <Link
-              href="/login"
+              href="/sign-in"
               className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-500 dark:hover:text-emerald-400 font-medium"
             >
               Back to login

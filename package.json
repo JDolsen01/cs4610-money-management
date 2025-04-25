@@ -7,12 +7,18 @@
   },
   "dependencies": {
     "@radix-ui/react-checkbox": "^1.1.1",
+    "@radix-ui/react-dialog": "^1.1.11",
     "@radix-ui/react-dropdown-menu": "^2.1.1",
     "@radix-ui/react-label": "^2.1.0",
+    "@radix-ui/react-progress": "^1.1.4",
+    "@radix-ui/react-select": "^2.2.2",
     "@radix-ui/react-slot": "^1.1.0",
+    "@radix-ui/react-tabs": "^1.1.9",
     "@supabase/ssr": "latest",
     "@supabase/supabase-js": "latest",
+    "@tanstack/react-table": "^8.21.3",
     "autoprefixer": "10.4.20",
+    "chart.js": "^4.4.9",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "lucide-react": "^0.468.0",
@@ -23,6 +29,7 @@
     "react-dom": "19.0.0"
   },
   "devDependencies": {
+    "@types/chart.js": "^2.9.41",
     "@types/node": "22.10.2",
     "@types/react": "^19.0.2",
     "@types/react-dom": "19.0.2",
