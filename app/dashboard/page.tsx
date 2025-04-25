@@ -23,8 +23,20 @@ import { RecentTransactions } from "@/components/dashboard/recent-transactions";
 import { BudgetOverview } from "@/components/dashboard/budget-overview";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return redirect("/sign-in");
+  }
+
   return (
     <DashboardShell>
       <DashboardHeader
