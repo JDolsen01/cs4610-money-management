@@ -18,6 +18,13 @@ import { SubmitButton } from "@/components/submit-button";
 
 export default async function Login(props: { searchParams: Promise<Message> }) {
   const searchParams = await props.searchParams;
+  if ("message" in searchParams) {
+    return (
+      <div className="w-full flex-1 flex items-center h-screen sm:max-w-md justify-center gap-2 p-4">
+        <FormMessage message={searchParams} />
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 p-4">
@@ -76,7 +83,6 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
             >
               Sign In
             </SubmitButton>
-            <FormMessage message={searchParams} />
           </form>
         </CardContent>
         <CardFooter className="flex flex-col">

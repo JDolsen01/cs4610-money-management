@@ -297,164 +297,17 @@ export default function LandingPage() {
           </div>
         </section>
       </main>
-      <footer className="border-t bg-slate-50 dark:bg-slate-900">
-        <div className="container py-8 md:py-12">
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <DollarSign className="h-6 w-6 text-emerald-500" />
-                <span className="text-xl font-bold">MoneyTrack</span>
-              </div>
-              <p className="text-muted-foreground mb-4">
-                Take control of your finances with our intuitive money
-                management app.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-bold mb-4">Product</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link
-                    href="#features"
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    Features
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#pricing"
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    Pricing
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    Integrations
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    FAQ
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-bold mb-4">Company</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link
-                    href="#"
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    About
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    Blog
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    Careers
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    Contact
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-bold mb-4">Legal</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link
-                    href="#"
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    Terms
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    Privacy
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    Cookies
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    Licenses
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-sm text-muted-foreground">
-              &copy; {new Date().getFullYear()} MoneyTrack. All rights reserved.
-            </p>
-            <ThemeSwitcher />
-            <p className="text-sm text-muted-foreground mt-4 md:mt-0">
-              Made with ❤️ for better financial management
-            </p>
-          </div>
+      <footer className="container">
+        <div className="mt-4 mb-4 pb-4 pt-4 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-sm text-muted-foreground">
+            &copy; {new Date().getFullYear()} MoneyTrack. All rights reserved.
+          </p>
+          <ThemeSwitcher />
+          <p className="text-sm text-muted-foreground mt-4 md:mt-0">
+            Made with ❤️ for better financial management
+          </p>
         </div>
       </footer>
     </div>
-  );
-}
-
-function Users(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-      <circle cx="9" cy="7" r="4" />
-      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-    </svg>
   );
 }
