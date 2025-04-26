@@ -1,8 +1,7 @@
-import { forgotPasswordAction } from "@/app/actions";
-import { FormMessage, Message } from "@/components/form-message";
 import Link from "next/link";
 import { DollarSign } from "lucide-react";
-import { SubmitButton } from "@/components/submit-button";
+
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -13,26 +12,37 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { FormMessage, Message } from "@/components/form-message";
 
-export default async function ForgotPassword(props: {
+export default async function ForgotPasswordPage(props: {
   searchParams: Promise<Message>;
 }) {
   const searchParams = await props.searchParams;
-  return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 p-4">
-      <div className="mb-8 flex items-center gap-2 text-2xl font-bold">
-        <DollarSign className="h-8 w-8 text-emerald-500" />
-        <span>MoneyTrack</span>
+  if ("message" in searchParams) {
+    return (
+      <div className="w-full flex-1 flex items-center h-screen sm:max-w-md justify-center gap-2 p-4">
+        <FormMessage message={searchParams} />
       </div>
-
-      <Card className="w-full max-w-md">
+    );
+  }
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center bg-muted/40">
+      <div className="absolute right-8 top-8">
+        <ThemeToggle />
+      </div>
+      <Link href="/" className="absolute left-8 top-8 flex items-center gap-2">
+        <DollarSign className="h-6 w-6 text-emerald-600" />
+        <span className="font-bold">MoneyMinder</span>
+      </Link>
+      <Card className="mx-auto w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">
+          <CardTitle className="text-2xl font-bold">
             Reset your password
           </CardTitle>
-          <CardDescription className="text-center">
-            Enter your email address and we'll send you a link to reset your
-            password
+          <CardDescription>
+            Enter your email address and we&apos;ll send you a link to reset
+            your password
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -41,47 +51,26 @@ export default async function ForgotPassword(props: {
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
-                type="email"
                 name="email"
+                type="email"
                 placeholder="name@example.com"
                 required
               />
             </div>
-
-            <SubmitButton
-              className="w-full bg-emerald-500 hover:bg-emerald-600"
-              formAction={forgotPasswordAction}
-            >
-              Reset Password
-            </SubmitButton>
-            <FormMessage message={searchParams} />
+            <Button type="submit" className="w-full">
+              Send Reset Link
+            </Button>
           </form>
         </CardContent>
-        <CardFooter className="flex flex-col">
-          <div className="text-center text-sm text-muted-foreground">
-            <Link
-              href="/sign-in"
-              className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-500 dark:hover:text-emerald-400 font-medium"
-            >
+        <CardFooter>
+          <div className="text-center w-full text-sm">
+            Remember your password?{" "}
+            <Link href="/login" className="text-emerald-600 hover:underline">
               Back to login
             </Link>
           </div>
         </CardFooter>
       </Card>
-
-      <div className="mt-8 text-center text-sm text-muted-foreground">
-        <Link href="/" className="hover:underline underline-offset-4">
-          Back to home
-        </Link>
-        <span className="mx-2">•</span>
-        <Link href="/privacy" className="hover:underline underline-offset-4">
-          Privacy Policy
-        </Link>
-        <span className="mx-2">•</span>
-        <Link href="/terms" className="hover:underline underline-offset-4">
-          Terms of Service
-        </Link>
-      </div>
     </div>
   );
 }

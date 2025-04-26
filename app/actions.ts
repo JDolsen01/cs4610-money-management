@@ -6,34 +6,46 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 export const signUpAction = async (formData: FormData) => {
+  const displayName =
+    formData.get("firstName")?.toString() +
+    " " +
+    formData.get("lastName")?.toString();
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
+  const confirmPassword = formData.get("confirmPassword")?.toString();
   const supabase = await createClient();
   const origin = (await headers()).get("origin");
 
   if (!email || !password) {
     return encodedRedirect(
       "error",
-      "/sign-up",
+      "/signup",
       "Email and password are required"
     );
+  }
+
+  if (password !== confirmPassword) {
+    return encodedRedirect("error", "/signup", "Passwords do not match");
   }
 
   const { error } = await supabase.auth.signUp({
     email,
     password,
     options: {
+      data: {
+        displayName: displayName,
+      },
       emailRedirectTo: `${origin}/auth/callback`,
     },
   });
 
   if (error) {
     console.error(error.code + " " + error.message);
-    return encodedRedirect("error", "/sign-up", error.message);
+    return encodedRedirect("error", "/signup", error.message);
   } else {
     return encodedRedirect(
       "success",
-      "/sign-up",
+      "/signup",
       "Thanks for signing up! Please check your email for a verification link."
     );
   }
@@ -50,7 +62,7 @@ export const signInAction = async (formData: FormData) => {
   });
 
   if (error) {
-    return encodedRedirect("error", "/sign-in", error.message);
+    return encodedRedirect("error", "/login", error.message);
   }
 
   return redirect("/dashboard");
@@ -130,5 +142,5 @@ export const resetPasswordAction = async (formData: FormData) => {
 export const signOutAction = async () => {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  return redirect("/sign-in");
+  return redirect("/login");
 };
