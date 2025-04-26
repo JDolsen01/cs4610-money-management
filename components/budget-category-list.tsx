@@ -69,35 +69,32 @@ export async function BudgetCategoryList({
                     <span className="sr-only">Open menu</span>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
-
-                  <Dialog>
+                <Dialog>
+                  <DropdownMenuContent>
+                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DialogTrigger asChild>
                       <DropdownMenuItem>
                         <Edit className="mr-2 h-4 w-4" />
                         Edit category
                       </DropdownMenuItem>
                     </DialogTrigger>
-
-                    <DialogContent className="sm:max-w-[425px]">
-                      <DialogHeader>
-                        <DialogTitle>Edit Budget Category</DialogTitle>
-                        <DialogDescription>
-                          Update the details of your budget category.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <BudgetCategoryForm initialData={category} />
-                    </DialogContent>
-                  </Dialog>
-
-                  <DropdownMenuItem>View expenses</DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem className="text-destructive">
-                    <Trash className="mr-2 h-4 w-4" />
-                    Delete category
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
+                    <DropdownMenuItem>View expenses</DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem className="text-destructive">
+                      <Trash className="mr-2 h-4 w-4" />
+                      Delete category
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Edit Budget Category</DialogTitle>
+                      <DialogDescription>
+                        Update the details of your budget category.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <BudgetCategoryForm initialData={category} />
+                  </DialogContent>
+                </Dialog>
               </DropdownMenu>
             </div>
             <CardDescription>

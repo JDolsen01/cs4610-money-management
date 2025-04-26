@@ -5,10 +5,11 @@ import { DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { createBudget } from "@/app/budgets";
+import { createBudget, updateBudget } from "@/app/budgets";
 
 interface BudgetCategoryFormProps {
   initialData?: {
+    id?: string;
     name?: string;
     budget?: number;
     color?: string;
@@ -19,6 +20,7 @@ interface BudgetCategoryFormProps {
 export function BudgetCategoryForm({ initialData }: BudgetCategoryFormProps) {
   return (
     <form className="space-y-4 py-2 pb-4">
+      <input type="hidden" name="id" defaultValue={initialData?.id} />
       <div className="space-y-2">
         <Label htmlFor="name">Category Name</Label>
         <Input
@@ -81,7 +83,10 @@ export function BudgetCategoryForm({ initialData }: BudgetCategoryFormProps) {
         />
       </div>
       <DialogFooter>
-        <Button type="submit" formAction={createBudget}>
+        <Button
+          type="submit"
+          formAction={initialData ? updateBudget : createBudget}
+        >
           Save Category
         </Button>
       </DialogFooter>
