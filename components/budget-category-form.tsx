@@ -7,12 +7,26 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { createBudget } from "@/app/budgets";
 
-export function BudgetCategoryForm() {
+interface BudgetCategoryFormProps {
+  initialData?: {
+    name?: string;
+    budget?: number;
+    color?: string;
+    notes?: string;
+  };
+}
+
+export function BudgetCategoryForm({ initialData }: BudgetCategoryFormProps) {
   return (
     <form className="space-y-4 py-2 pb-4">
       <div className="space-y-2">
         <Label htmlFor="name">Category Name</Label>
-        <Input id="name" name="name" placeholder="Groceries" />
+        <Input
+          id="name"
+          name="name"
+          placeholder="Groceries"
+          defaultValue={initialData?.name}
+        />
       </div>
       <div className="space-y-2">
         <Label htmlFor="budget-amount">Monthly Budget</Label>
@@ -23,6 +37,7 @@ export function BudgetCategoryForm() {
           <Input
             id="budget-amount"
             name="budget"
+            defaultValue={initialData?.budget}
             type="number"
             step="0.01"
             min="0"
@@ -61,6 +76,7 @@ export function BudgetCategoryForm() {
         <Textarea
           id="notes"
           name="notes"
+          defaultValue={initialData?.notes}
           placeholder="Add any additional details here..."
         />
       </div>

@@ -66,7 +66,6 @@ export default async function BudgetsPage() {
       <Tabs defaultValue="all" className="space-y-4">
         <TabsList>
           <TabsTrigger value="all">All Categories</TabsTrigger>
-          <TabsTrigger value="active">Active</TabsTrigger>
           <TabsTrigger value="overspent">Overspent</TabsTrigger>
         </TabsList>
         <TabsContent value="all" className="space-y-4">

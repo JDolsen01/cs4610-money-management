@@ -2,6 +2,14 @@ import { Edit, MoreHorizontal, Trash } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
   Card,
   CardContent,
   CardDescription,
@@ -17,6 +25,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Progress } from "@/components/ui/progress";
+import { BudgetCategoryForm } from "./budget-category-form";
 
 interface BudgetCategoryListProps {
   budgetCategories: any[] | null;
@@ -62,10 +71,26 @@ export async function BudgetCategoryList({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                  <DropdownMenuItem>
-                    <Edit className="mr-2 h-4 w-4" />
-                    Edit category
-                  </DropdownMenuItem>
+
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <DropdownMenuItem>
+                        <Edit className="mr-2 h-4 w-4" />
+                        Edit category
+                      </DropdownMenuItem>
+                    </DialogTrigger>
+
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>Edit Budget Category</DialogTitle>
+                        <DialogDescription>
+                          Update the details of your budget category.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <BudgetCategoryForm initialData={category} />
+                    </DialogContent>
+                  </Dialog>
+
                   <DropdownMenuItem>View expenses</DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem className="text-destructive">
