@@ -25,6 +25,12 @@ export default async function BudgetsPage() {
   if (!user) {
     return redirect("/login");
   }
+
+  const { data: budgetCategories } = await supabase
+    .from("budgets")
+    .select("*")
+    .eq("user_id", (await supabase.auth.getUser()).data.user?.id);
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col justify-between space-y-2 md:flex-row md:items-center md:space-y-0">
@@ -64,13 +70,13 @@ export default async function BudgetsPage() {
           <TabsTrigger value="overspent">Overspent</TabsTrigger>
         </TabsList>
         <TabsContent value="all" className="space-y-4">
-          <BudgetCategoryList />
-        </TabsContent>
-        <TabsContent value="active" className="space-y-4">
-          <BudgetCategoryList filter="active" />
+          <BudgetCategoryList budgetCategories={budgetCategories} />
         </TabsContent>
         <TabsContent value="overspent" className="space-y-4">
-          <BudgetCategoryList filter="overspent" />
+          <BudgetCategoryList
+            budgetCategories={budgetCategories}
+            filter="overspent"
+          />
         </TabsContent>
       </Tabs>
     </div>

@@ -6,8 +6,7 @@ export async function getBudgets() {
   const { data, error } = await supabase
     .from("budgets")
     .select("*")
-    .eq("user_id", (await supabase.auth.getUser()).data.user?.id)
-    .select("*");
+    .eq("user_id", (await supabase.auth.getUser()).data.user?.id);
 
   if (error) {
     console.error("Error fetching profile:", error.message);

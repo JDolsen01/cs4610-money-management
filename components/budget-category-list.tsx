@@ -19,79 +19,17 @@ import {
 import { Progress } from "@/components/ui/progress";
 
 interface BudgetCategoryListProps {
+  budgetCategories: any[] | null;
   filter?: "active" | "overspent";
 }
 
-export function BudgetCategoryList({ filter }: BudgetCategoryListProps = {}) {
-  // This would normally come from a database
-  const budgetCategories = [
-    {
-      id: 1,
-      name: "Groceries",
-      budget: 500,
-      spent: 320,
-      remaining: 180,
-      color: "bg-green-500",
-      active: true,
-      percentSpent: 64,
-      isOverspent: false,
-    },
-    {
-      id: 2,
-      name: "Dining Out",
-      budget: 200,
-      spent: 175,
-      remaining: 25,
-      color: "bg-blue-500",
-      active: true,
-      percentSpent: 87.5,
-      isOverspent: false,
-    },
-    {
-      id: 3,
-      name: "Entertainment",
-      budget: 150,
-      spent: 180,
-      remaining: -30,
-      color: "bg-red-500",
-      active: true,
-      percentSpent: 120,
-      isOverspent: true,
-    },
-    {
-      id: 4,
-      name: "Transportation",
-      budget: 300,
-      spent: 250,
-      remaining: 50,
-      color: "bg-yellow-500",
-      active: true,
-      percentSpent: 83.3,
-      isOverspent: false,
-    },
-    {
-      id: 5,
-      name: "Shopping",
-      budget: 200,
-      spent: 220,
-      remaining: -20,
-      color: "bg-purple-500",
-      active: true,
-      percentSpent: 110,
-      isOverspent: true,
-    },
-    {
-      id: 6,
-      name: "Vacation",
-      budget: 500,
-      spent: 0,
-      remaining: 500,
-      color: "bg-pink-500",
-      active: false,
-      percentSpent: 0,
-      isOverspent: false,
-    },
-  ];
+export async function BudgetCategoryList({
+  budgetCategories,
+  filter,
+}: BudgetCategoryListProps) {
+  if (!budgetCategories) {
+    return <div className="text-red-500">No budget categories found.</div>;
+  }
 
   // Apply filters if needed
   let filteredCategories = [...budgetCategories];
@@ -110,7 +48,9 @@ export function BudgetCategoryList({ filter }: BudgetCategoryListProps = {}) {
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <div className={`h-4 w-4 rounded-full ${category.color}`} />
+                <div
+                  className={`h-4 w-4 rounded-full bg-${category.color.toLowerCase()}-500`}
+                />
                 <CardTitle className="text-lg">{category.name}</CardTitle>
               </div>
               <DropdownMenu>
@@ -166,7 +106,7 @@ export function BudgetCategoryList({ filter }: BudgetCategoryListProps = {}) {
                       : "font-medium"
                   }
                 >
-                  ${category.remaining.toFixed(2)}
+                  ${(category.budget - category.spent).toFixed(2)}
                 </span>
               </div>
             </div>
