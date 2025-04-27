@@ -109,20 +109,14 @@ export function BudgetCategoryList({
                 </Dialog>
               </DropdownMenu>
             </div>
-            <CardDescription>
-              {category.active ? (
-                <span className="text-xs">Active</span>
-              ) : (
-                <span className="text-xs text-muted-foreground">Inactive</span>
-              )}
-            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span>Budget: ${category.budget.toFixed(2)}</span>
+                <span>Budget: ${category.budget?.toFixed(2)}</span>
                 <span>
-                  Spent: ${category.spent.toFixed(2)} ({category.percentSpent}%)
+                  Spent: ${category.spent?.toFixed(2)} ({category.percentSpent}
+                  %)
                 </span>
               </div>
               <Progress

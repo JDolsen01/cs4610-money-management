@@ -5,54 +5,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 
-export function BudgetCategoryOverview() {
-  // This would normally come from a database
-  const budgetCategories = [
-    {
-      id: 1,
-      name: "Groceries",
-      budget: 500,
-      spent: 320,
-      remaining: 180,
-      color: "bg-green-500",
-      active: true,
-      percentSpent: 64,
-      isOverspent: false,
-    },
-    {
-      id: 2,
-      name: "Dining Out",
-      budget: 200,
-      spent: 175,
-      remaining: 25,
-      color: "bg-blue-500",
-      active: true,
-      percentSpent: 87.5,
-      isOverspent: false,
-    },
-    {
-      id: 3,
-      name: "Entertainment",
-      budget: 150,
-      spent: 180,
-      remaining: -30,
-      color: "bg-red-500",
-      active: true,
-      percentSpent: 120,
-      isOverspent: true,
-    },
-    {
-      id: 4,
-      name: "Transportation",
-      budget: 300,
-      spent: 250,
-      remaining: 50,
-      color: "bg-yellow-500",
-      active: true,
-      percentSpent: 83.3,
-      isOverspent: false,
-    },
-  ];
+interface BudgetCategoryListProps {
+  budgetCategories: any[] | null;
+}
+
+export function BudgetCategoryOverview({
+  budgetCategories,
+}: BudgetCategoryListProps) {
+  if (!budgetCategories) {
+    return <div className="text-red-500">No budget categories found.</div>;
+  }
 
   return (
     <div>
@@ -66,11 +28,13 @@ export function BudgetCategoryOverview() {
         </Button>
       </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {budgetCategories.map((category) => (
+        {budgetCategories.map((category, index) => (
           <Card key={category.id}>
             <CardHeader className="pb-2">
               <div className="flex items-center space-x-2">
-                <div className={`h-3 w-3 rounded-full ${category.color}`} />
+                <div
+                  className={`h-3 w-3 rounded-full bg-${category.color.toLowerCase()}-500`}
+                />
                 <CardTitle className="text-sm font-medium">
                   {category.name}
                 </CardTitle>
@@ -84,7 +48,7 @@ export function BudgetCategoryOverview() {
                   </span>
                   <span
                     className={`font-medium ${
-                      category.isOverspent ? "text-red-500" : ""
+                      category.spent > category.budget ? "text-red-500" : ""
                     }`}
                   >
                     {category.percentSpent}%
@@ -94,7 +58,9 @@ export function BudgetCategoryOverview() {
                   value={
                     category.percentSpent > 100 ? 100 : category.percentSpent
                   }
-                  className={`h-2 ${category.isOverspent ? "bg-red-200" : ""}`}
+                  className={`h-2 ${
+                    category.spent > category.budget ? "bg-red-200" : ""
+                  }`}
                 />
               </div>
             </CardContent>

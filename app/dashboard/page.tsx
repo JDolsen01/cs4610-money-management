@@ -21,6 +21,13 @@ export default async function DashboardPage() {
     return redirect("/login");
   }
 
+  const { data: budgetCategories } = await supabase
+    .from("budgets")
+    .select("*")
+    .order("budget", { ascending: true })
+    .eq("user_id", user.id)
+    .limit(4);
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col justify-between space-y-2 md:flex-row md:items-center md:space-y-0">
@@ -49,7 +56,7 @@ export default async function DashboardPage() {
       <FinancialSummary />
 
       <div className="my-8">
-        <BudgetCategoryOverview />
+        <BudgetCategoryOverview budgetCategories={budgetCategories} />
       </div>
 
       <Tabs defaultValue="transactions" className="space-y-4">
