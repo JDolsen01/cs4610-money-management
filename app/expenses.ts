@@ -23,7 +23,7 @@ export async function createExpense(formData: FormData) {
       name,
       amount: amount ? parseFloat(amount.toString()) : null,
       date: date ? new Date(date.toString()) : null,
-      budget,
+      budget: budget == "NULL" ? null : budget,
       notes,
       user_id: (await supabase.auth.getUser()).data.user?.id,
     })

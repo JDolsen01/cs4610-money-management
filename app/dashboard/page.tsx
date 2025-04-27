@@ -9,6 +9,15 @@ import { FinancialSummary } from "@/components/financial-summary";
 import { BudgetCategoryOverview } from "@/components/budget-category-overview";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { ExpenseForm } from "@/components/expense-form";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -44,12 +53,23 @@ export default async function DashboardPage() {
               Add Income
             </Link>
           </Button>
-          <Button asChild>
-            <Link href="/dashboard/expenses">
-              <Plus className="mr-2 h-4 w-4" />
-              Add Expense
-            </Link>
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="mr-2 h-4 w-4" />
+                Add Expense
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Add New Expense</DialogTitle>
+                <DialogDescription>
+                  Enter the details of your expense below.
+                </DialogDescription>
+              </DialogHeader>
+              <ExpenseForm budgets={budgetCategories} />
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 

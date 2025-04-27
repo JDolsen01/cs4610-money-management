@@ -67,8 +67,10 @@ export function ExpenseForm({ initialData, budgets }: ExpenseFormProps) {
               <SelectItem key={budget.name} value={budget.id}>
                 {budget.name}
               </SelectItem>
-            )) || <SelectItem value="none">No categories available</SelectItem>}
-            <SelectItem value="none">None</SelectItem>
+            )) || (
+              <SelectItem value={"NULL"}>No categories available</SelectItem>
+            )}
+            <SelectItem value="NULL">None</SelectItem>
           </SelectContent>
         </Select>
       </div>
