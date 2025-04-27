@@ -1,3 +1,5 @@
+"use client";
+
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -26,13 +28,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Progress } from "@/components/ui/progress";
 import { BudgetCategoryForm } from "./budget-category-form";
+import { deleteBudget } from "@/app/budgets";
 
 interface BudgetCategoryListProps {
   budgetCategories: any[] | null;
   filter?: "active" | "overspent";
 }
 
-export async function BudgetCategoryList({
+export function BudgetCategoryList({
   budgetCategories,
   filter,
 }: BudgetCategoryListProps) {
@@ -80,9 +83,18 @@ export async function BudgetCategoryList({
                     </DialogTrigger>
                     <DropdownMenuItem>View expenses</DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="text-destructive">
-                      <Trash className="mr-2 h-4 w-4" />
-                      Delete category
+                    <DropdownMenuItem className="text-destructive" asChild>
+                      <form action={deleteBudget}>
+                        <input type="hidden" name="id" value={category.id} />
+                        <Button
+                          type="submit"
+                          variant="ghost"
+                          className="w-full text-left"
+                        >
+                          <Trash className="mr-2 h-4 w-4" />
+                          Delete category
+                        </Button>
+                      </form>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                   <DialogContent className="sm:max-w-[425px]">
