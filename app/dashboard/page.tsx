@@ -37,13 +37,20 @@ export default async function DashboardPage() {
     .eq("user_id", user.id)
     .limit(4);
 
+  const { data: expenses } = await supabase
+    .from("expenses")
+    .select("*, budget(name, color)")
+    .order("date", { ascending: false })
+    .eq("user_id", user.id)
+    .limit(4);
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col justify-between space-y-2 md:flex-row md:items-center md:space-y-0">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
           <p className="text-muted-foreground">
-            Welcome back, John! Here's an overview of your finances.
+            Welcome back! Here's an overview of your finances.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -88,14 +95,14 @@ export default async function DashboardPage() {
         <TabsContent value="transactions" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <RecentIncome />
-            <RecentExpenses />
+            <RecentExpenses expenses={expenses} />
           </div>
         </TabsContent>
         <TabsContent value="income" className="space-y-4">
           <RecentIncome />
         </TabsContent>
         <TabsContent value="expenses" className="space-y-4">
-          <RecentExpenses />
+          <RecentExpenses expenses={expenses} />
         </TabsContent>
       </Tabs>
     </div>

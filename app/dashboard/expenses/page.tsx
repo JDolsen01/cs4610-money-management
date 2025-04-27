@@ -47,6 +47,12 @@ export default async function ExpensesPage() {
     .select("id, name")
     .eq("user_id", (await supabase.auth.getUser()).data.user?.id);
 
+  const { data: expenses } = await supabase
+    .from("expenses")
+    .select("*, budget(name, color)")
+    .order("date", { ascending: false })
+    .eq("user_id", user.id);
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col justify-between space-y-2 md:flex-row md:items-center md:space-y-0">
@@ -147,21 +153,17 @@ export default async function ExpensesPage() {
         <Tabs defaultValue="all" className="space-y-4">
           <TabsList>
             <TabsTrigger value="all">All Expenses</TabsTrigger>
-            <TabsTrigger value="recent">Recent</TabsTrigger>
             <TabsTrigger value="highest">Highest</TabsTrigger>
             <TabsTrigger value="lowest">Lowest</TabsTrigger>
           </TabsList>
           <TabsContent value="all" className="space-y-4">
-            <ExpenseList />
-          </TabsContent>
-          <TabsContent value="recent" className="space-y-4">
-            <ExpenseList filter="recent" />
+            <ExpenseList expenses={expenses} />
           </TabsContent>
           <TabsContent value="highest" className="space-y-4">
-            <ExpenseList filter="highest" />
+            <ExpenseList filter="highest" expenses={expenses} />
           </TabsContent>
           <TabsContent value="lowest" className="space-y-4">
-            <ExpenseList filter="lowest" />
+            <ExpenseList filter="lowest" expenses={expenses} />
           </TabsContent>
         </Tabs>
       </div>
