@@ -26,9 +26,10 @@ import {
 interface ExpenseListProps {
   filter?: "recent" | "highest" | "lowest";
   expenses: any[] | null;
+  budgets: any[] | null;
 }
 
-export function ExpenseList({ filter, expenses }: ExpenseListProps) {
+export function ExpenseList({ filter, expenses, budgets }: ExpenseListProps) {
   if (!expenses) {
     return <div className="text-red-500">No recent expenses found.</div>;
   }
@@ -36,7 +37,7 @@ export function ExpenseList({ filter, expenses }: ExpenseListProps) {
   // Apply filters if needed
   let filteredExpenses = [...expenses];
   if (filter === "recent") {
-    filteredExpenses = expenses.slice(0, 3);
+    filteredExpenses = expenses;
   } else if (filter === "highest") {
     filteredExpenses = [...expenses].sort((a, b) => b.amount - a.amount);
   } else if (filter === "lowest") {
@@ -65,13 +66,20 @@ export function ExpenseList({ filter, expenses }: ExpenseListProps) {
                 <div>
                   <div className="flex items-center gap-2">
                     <div
-                      className={`h-2 w-2 rounded-full bg-${expense.budget.color.toLowerCase()}-500`}
-                      title={`Budget: ${expense.budget.name}`}
+                      className={`h-2 w-2 rounded-full ${
+                        expense.budget
+                          ? "bg-" + expense.budget?.color.toLowerCase() + "-500"
+                          : "bg-black"
+                      }`}
+                      title={`Budget: ${
+                        expense.budget ? expense.budget.name : "N/A"
+                      }`}
                     />
                     <p className="font-medium">{expense.name}</p>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    {expense.date} · {expense.budget.name}
+                    {expense.date} ·{" "}
+                    {expense.budget ? expense.budget.name : "N/A"}
                   </p>
                 </div>
               </div>

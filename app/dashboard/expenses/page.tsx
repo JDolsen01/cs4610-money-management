@@ -157,13 +157,25 @@ export default async function ExpensesPage() {
             <TabsTrigger value="lowest">Lowest</TabsTrigger>
           </TabsList>
           <TabsContent value="all" className="space-y-4">
-            <ExpenseList expenses={expenses} />
+            <ExpenseList
+              filter="recent"
+              expenses={expenses}
+              budgets={budgetCategories}
+            />
           </TabsContent>
           <TabsContent value="highest" className="space-y-4">
-            <ExpenseList filter="highest" expenses={expenses} />
+            <ExpenseList
+              filter="highest"
+              expenses={expenses}
+              budgets={budgetCategories}
+            />
           </TabsContent>
           <TabsContent value="lowest" className="space-y-4">
-            <ExpenseList filter="lowest" expenses={expenses} />
+            <ExpenseList
+              filter="lowest"
+              expenses={expenses}
+              budgets={budgetCategories}
+            />
           </TabsContent>
         </Tabs>
       </div>

@@ -36,19 +36,23 @@ export function RecentExpenses({ expenses }: RecentExpensesProps) {
         {expenses.map((expense) => (
           <div key={expense.id} className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              {/* <div className={`rounded-full ${expense.bgColor} p-2`}>
-                <expense.icon className={`h-4 w-4 ${expense.iconColor}`} />
-              </div> */}
               <div>
                 <div className="flex items-center gap-2">
                   <div
-                    className={`h-2 w-2 rounded-full bg-${expense.budget.color.toLowerCase()}-500`}
-                    title={`Budget: ${expense.budget.name}`}
+                    className={`h-2 w-2 rounded-full ${
+                      expense.budget
+                        ? "bg-" + expense.budget?.color.toLowerCase() + "-500"
+                        : "bg-black"
+                    }`}
+                    title={`Budget: ${
+                      expense.budget ? expense.budget.name : "N/A"
+                    }`}
                   />
                   <p className="text-sm font-medium">{expense.name}</p>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {expense.date} · {expense.budget.name}
+                  {expense.date} ·{" "}
+                  {expense.budget ? expense.budget.name : "N/A"}
                 </p>
               </div>
             </div>
