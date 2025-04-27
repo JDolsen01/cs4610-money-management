@@ -41,6 +41,12 @@ export default async function ExpensesPage() {
   if (!user) {
     return redirect("/login");
   }
+
+  const { data: budgetCategories } = await supabase
+    .from("budgets")
+    .select("id, name")
+    .eq("user_id", (await supabase.auth.getUser()).data.user?.id);
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col justify-between space-y-2 md:flex-row md:items-center md:space-y-0">
@@ -65,7 +71,7 @@ export default async function ExpensesPage() {
                   Enter the details of your expense below.
                 </DialogDescription>
               </DialogHeader>
-              <ExpenseForm />
+              <ExpenseForm budgets={budgetCategories} />
             </DialogContent>
           </Dialog>
         </div>

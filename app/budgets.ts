@@ -8,6 +8,7 @@ export async function createBudget(formData: FormData) {
   const spent = 0;
   const color = formData.get("color")?.toString();
   const notes = formData.get("notes")?.toString();
+
   const { data, error } = await supabase
     .from("budgets")
     .insert({

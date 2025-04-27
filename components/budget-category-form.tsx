@@ -45,6 +45,7 @@ export function BudgetCategoryForm({ initialData }: BudgetCategoryFormProps) {
             min="0"
             className="pl-7"
             placeholder="0.00"
+            required
           />
         </div>
       </div>
