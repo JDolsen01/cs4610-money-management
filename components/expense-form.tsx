@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { createExpense } from "@/app/expenses";
+import { createExpense, updateExpense } from "@/app/expenses";
 
 interface ExpenseFormProps {
   initialData?: {
@@ -21,22 +21,28 @@ interface ExpenseFormProps {
     name?: string;
     amount?: number;
     category?: string;
-    date?: string;
+    date: string;
     notes?: string;
   };
-  budgets: { id: string; name: string }[] | null;
+  budgets?: { id: string; name: string }[] | null;
 }
 
 export function ExpenseForm({ initialData, budgets }: ExpenseFormProps) {
   const [date, setDate] = useState<string>(
-    new Date().toISOString().split("T")[0]
+    initialData?.date || new Date().toISOString().split("T")[0]
   );
 
   return (
     <form className="space-y-4 py-2 pb-4">
+      <input type="hidden" name="id" defaultValue={initialData?.id} />
       <div className="space-y-2">
         <Label htmlFor="name">Expense Name</Label>
-        <Input id="name" name="name" placeholder="Grocery shopping" />
+        <Input
+          id="name"
+          name="name"
+          placeholder="Grocery shopping"
+          defaultValue={initialData?.name}
+        />
       </div>
       <div className="space-y-2">
         <Label htmlFor="amount">Amount</Label>
@@ -52,6 +58,7 @@ export function ExpenseForm({ initialData, budgets }: ExpenseFormProps) {
             min="0"
             className="pl-7"
             placeholder="0.00"
+            defaultValue={initialData?.amount}
             required
           />
         </div>
@@ -62,14 +69,12 @@ export function ExpenseForm({ initialData, budgets }: ExpenseFormProps) {
           <SelectTrigger id="category">
             <SelectValue placeholder="Select budget category" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent defaultValue={initialData?.category}>
             {budgets?.map((budget) => (
-              <SelectItem key={budget.name} value={budget.id}>
+              <SelectItem key={budget.name + initialData?.id} value={budget.id}>
                 {budget.name}
               </SelectItem>
-            )) || (
-              <SelectItem value={"NULL"}>No categories available</SelectItem>
-            )}
+            ))}
             <SelectItem value="NULL">None</SelectItem>
           </SelectContent>
         </Select>
@@ -91,10 +96,14 @@ export function ExpenseForm({ initialData, budgets }: ExpenseFormProps) {
           id="notes"
           name="notes"
           placeholder="Add any additional details here..."
+          defaultValue={initialData?.notes}
         />
       </div>
       <DialogFooter>
-        <Button type="submit" formAction={createExpense}>
+        <Button
+          type="submit"
+          formAction={initialData ? updateExpense : createExpense}
+        >
           Save Expense
         </Button>
       </DialogFooter>

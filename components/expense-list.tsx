@@ -1,11 +1,6 @@
-import {
-  Coffee,
-  CreditCard,
-  Home,
-  MoreHorizontal,
-  ShoppingBag,
-} from "lucide-react";
+"use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -22,6 +17,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { ExpenseForm } from "./expense-form";
+import { MoreHorizontal } from "lucide-react";
 
 interface ExpenseListProps {
   filter?: "recent" | "highest" | "lowest";
@@ -30,18 +35,17 @@ interface ExpenseListProps {
 }
 
 export function ExpenseList({ filter, expenses, budgets }: ExpenseListProps) {
+  const [openDialogId, setOpenDialogId] = useState<string | null>(null);
+
   if (!expenses) {
     return <div className="text-red-500">No recent expenses found.</div>;
   }
 
-  // Apply filters if needed
   let filteredExpenses = [...expenses];
-  if (filter === "recent") {
-    filteredExpenses = expenses;
-  } else if (filter === "highest") {
-    filteredExpenses = [...expenses].sort((a, b) => b.amount - a.amount);
+  if (filter === "highest") {
+    filteredExpenses.sort((a, b) => b.amount - a.amount);
   } else if (filter === "lowest") {
-    filteredExpenses = [...expenses].sort((a, b) => a.amount - b.amount);
+    filteredExpenses.sort((a, b) => a.amount - b.amount);
   }
 
   return (
@@ -83,14 +87,12 @@ export function ExpenseList({ filter, expenses, budgets }: ExpenseListProps) {
                   </p>
                 </div>
               </div>
+
               <div className="flex items-center space-x-4">
-                <div className="text-right">
-                  <div className="flex items-center gap-2">
-                    <p className="font-medium text-red-600">
-                      -${expense.amount.toFixed(2)}
-                    </p>
-                  </div>
-                </div>
+                <p className="font-medium text-red-600">
+                  -${expense.amount.toFixed(2)}
+                </p>
+
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon">
@@ -98,20 +100,35 @@ export function ExpenseList({ filter, expenses, budgets }: ExpenseListProps) {
                       <span className="sr-only">Open menu</span>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
+                  <DropdownMenuContent>
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuItem>Edit expense</DropdownMenuItem>
-                    <DropdownMenuItem>View details</DropdownMenuItem>
-                    <DropdownMenuItem>
-                      {expense.paid ? "Mark as unpaid" : "Mark as paid"}
+                    <DropdownMenuItem
+                      onClick={() => setOpenDialogId(expense.id)}
+                    >
+                      Edit Expense
                     </DropdownMenuItem>
+                    <DropdownMenuItem>View Details</DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="text-destructive">
-                      Delete expense
-                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
+
+              <Dialog
+                open={openDialogId === expense.id}
+                onOpenChange={(open) => {
+                  if (!open) setOpenDialogId(null);
+                }}
+              >
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Edit Expense</DialogTitle>
+                    <DialogDescription>
+                      Update the details of your expense below.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <ExpenseForm initialData={expense} budgets={budgets} />
+                </DialogContent>
+              </Dialog>
             </div>
           ))}
         </div>
