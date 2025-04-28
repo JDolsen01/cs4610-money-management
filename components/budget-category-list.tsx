@@ -33,7 +33,10 @@ export function BudgetCategoryList({
   budgetCategories,
   filter,
 }: BudgetCategoryListProps) {
-  const [openDialogId, setOpenDialogId] = useState<string | null>(null);
+  const [openDialog, setOpenDialog] = useState<{
+    id: string;
+    type: "edit" | "view" | "delete";
+  } | null>(null);
 
   if (!budgetCategories) {
     return <div className="text-red-500">No budget categories found.</div>;
@@ -72,25 +75,30 @@ export function BudgetCategoryList({
                 <DropdownMenuContent>
                   <DropdownMenuLabel>Actions</DropdownMenuLabel>
                   <DropdownMenuItem
-                    onClick={() => setOpenDialogId(category.id)}
+                    onClick={() =>
+                      setOpenDialog({ id: category.id, type: "edit" })
+                    }
                   >
                     <Edit className="mr-2 h-4 w-4" />
-                    Edit category
+                    Edit
                   </DropdownMenuItem>
-                  <DropdownMenuItem>View expenses</DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() =>
+                      setOpenDialog({ id: category.id, type: "view" })
+                    }
+                  >
+                    <MoreHorizontal className="mr-2 h-4 w-4" />
+                    View Details
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem className="text-destructive" asChild>
-                    <form action={deleteBudget}>
-                      <input type="hidden" name="id" value={category.id} />
-                      <Button
-                        type="submit"
-                        variant="ghost"
-                        className="w-full text-left"
-                      >
-                        <Trash className="mr-2 h-4 w-4" />
-                        Delete category
-                      </Button>
-                    </form>
+                  <DropdownMenuItem
+                    onClick={() =>
+                      setOpenDialog({ id: category.id, type: "delete" })
+                    }
+                    className="text-destructive"
+                  >
+                    <Trash className="mr-2 h-4 w-4" />
+                    Delete
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -128,9 +136,9 @@ export function BudgetCategoryList({
           </CardContent>
 
           <Dialog
-            open={openDialogId === category.id}
+            open={openDialog?.id === category.id && openDialog?.type === "edit"}
             onOpenChange={(open) => {
-              if (!open) setOpenDialogId(null);
+              if (!open) setOpenDialog(null);
             }}
           >
             <DialogContent className="sm:max-w-[425px]">
@@ -141,6 +149,66 @@ export function BudgetCategoryList({
                 </DialogDescription>
               </DialogHeader>
               <BudgetCategoryForm initialData={category} />
+            </DialogContent>
+          </Dialog>
+
+          <Dialog
+            open={openDialog?.id === category.id && openDialog?.type === "view"}
+            onOpenChange={(open) => {
+              if (!open) setOpenDialog(null);
+            }}
+          >
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Category Details</DialogTitle>
+                <DialogDescription>
+                  Here are more details about this budget category.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-2">
+                <p>
+                  <strong>Name:</strong> {category.name}
+                </p>
+                <p>
+                  <strong>Budget:</strong> ${category.budget?.toFixed(2)}
+                </p>
+                <p>
+                  <strong>Spent:</strong> ${category.spent?.toFixed(2)}
+                </p>
+                <p>
+                  <strong>Notes:</strong>{" "}
+                  {category.notes || "No notes provided."}
+                </p>
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog
+            open={
+              openDialog?.id === category.id && openDialog?.type === "delete"
+            }
+            onOpenChange={(open) => {
+              if (!open) setOpenDialog(null);
+            }}
+          >
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Confirm Deletion</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete this budget category?
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex justify-end space-x-2">
+                <Button variant="outline" onClick={() => setOpenDialog(null)}>
+                  Cancel
+                </Button>
+                <form action={deleteBudget}>
+                  <input type="hidden" name="id" value={category.id} />
+                  <Button type="submit" variant="destructive">
+                    Delete
+                  </Button>
+                </form>
+              </div>
             </DialogContent>
           </Dialog>
         </Card>

@@ -63,3 +63,16 @@ export async function updateExpense(formData: FormData) {
 
   return data[0];
 }
+
+export async function deleteExpense(formData: FormData) {
+  const expenseId = formData.get("id")?.toString();
+  const { error } = await supabase
+    .from("expenses")
+    .delete()
+    .eq("id", expenseId)
+    .eq("user_id", (await supabase.auth.getUser()).data.user?.id);
+
+  if (error) {
+    console.error("Error deleting expense:", error.message);
+  }
+}

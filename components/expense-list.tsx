@@ -23,10 +23,10 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { ExpenseForm } from "./expense-form";
-import { MoreHorizontal } from "lucide-react";
+import { Edit, MoreHorizontal, Trash } from "lucide-react";
+import { deleteExpense } from "@/app/expenses";
 
 interface ExpenseListProps {
   filter?: "recent" | "highest" | "lowest";
@@ -35,7 +35,10 @@ interface ExpenseListProps {
 }
 
 export function ExpenseList({ filter, expenses, budgets }: ExpenseListProps) {
-  const [openDialogId, setOpenDialogId] = useState<string | null>(null);
+  const [openDialog, setOpenDialog] = useState<{
+    id: string;
+    type: "edit" | "view" | "delete";
+  } | null>(null);
 
   if (!expenses) {
     return <div className="text-red-500">No recent expenses found.</div>;
@@ -103,20 +106,41 @@ export function ExpenseList({ filter, expenses, budgets }: ExpenseListProps) {
                   <DropdownMenuContent>
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuItem
-                      onClick={() => setOpenDialogId(expense.id)}
+                      onClick={() =>
+                        setOpenDialog({ id: expense.id, type: "edit" })
+                      }
                     >
-                      Edit Expense
+                      <Edit className="mr-2 h-4 w-4" />
+                      Edit
                     </DropdownMenuItem>
-                    <DropdownMenuItem>View Details</DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() =>
+                        setOpenDialog({ id: expense.id, type: "view" })
+                      }
+                    >
+                      <MoreHorizontal className="mr-2 h-4 w-4" />
+                      View Details
+                    </DropdownMenuItem>
                     <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={() =>
+                        setOpenDialog({ id: expense.id, type: "delete" })
+                      }
+                      className="text-destructive"
+                    >
+                      <Trash className="mr-2 h-4 w-4" />
+                      Delete
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
 
               <Dialog
-                open={openDialogId === expense.id}
+                open={
+                  openDialog?.id === expense.id && openDialog?.type === "edit"
+                }
                 onOpenChange={(open) => {
-                  if (!open) setOpenDialogId(null);
+                  if (!open) setOpenDialog(null);
                 }}
               >
                 <DialogContent className="sm:max-w-[425px]">
@@ -127,6 +151,71 @@ export function ExpenseList({ filter, expenses, budgets }: ExpenseListProps) {
                     </DialogDescription>
                   </DialogHeader>
                   <ExpenseForm initialData={expense} budgets={budgets} />
+                </DialogContent>
+              </Dialog>
+
+              <Dialog
+                open={
+                  openDialog?.id === expense.id && openDialog?.type === "view"
+                }
+                onOpenChange={(open) => {
+                  if (!open) setOpenDialog(null);
+                }}
+              >
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Expense Details</DialogTitle>
+                    <DialogDescription>
+                      Here are more details about this expense
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-2">
+                    <p>
+                      <strong>Name:</strong> {expense.name}
+                    </p>
+                    <p>
+                      <strong>Date:</strong> ${expense.date}
+                    </p>
+                    <p>
+                      <strong>Spent:</strong> ${expense.amount?.toFixed(2)}
+                    </p>
+                    <p>
+                      <strong>Notes:</strong>{" "}
+                      {expense.notes || "No notes provided."}
+                    </p>
+                  </div>
+                </DialogContent>
+              </Dialog>
+
+              <Dialog
+                open={
+                  openDialog?.id === expense.id && openDialog?.type === "delete"
+                }
+                onOpenChange={(open) => {
+                  if (!open) setOpenDialog(null);
+                }}
+              >
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Confirm Deletion</DialogTitle>
+                    <DialogDescription>
+                      Are you sure you want to delete this expense?
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="flex justify-end space-x-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => setOpenDialog(null)}
+                    >
+                      Cancel
+                    </Button>
+                    <form action={deleteExpense}>
+                      <input type="hidden" name="id" value={expense.id} />
+                      <Button type="submit" variant="destructive">
+                        Delete
+                      </Button>
+                    </form>
+                  </div>
                 </DialogContent>
               </Dialog>
             </div>
