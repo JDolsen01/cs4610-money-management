@@ -9,14 +9,6 @@ export async function createExpense(formData: FormData) {
   const budget = formData.get("budget")?.toString();
   const notes = formData.get("notes")?.toString();
 
-  console.log("Creating expense with data:", {
-    name,
-    amount,
-    date,
-    budget,
-    notes,
-  });
-
   const { data, error } = await supabase
     .from("expenses")
     .insert({

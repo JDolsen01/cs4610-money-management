@@ -1,79 +1,84 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { DialogFooter } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
-import { Switch } from "@/components/ui/switch"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { createIncome } from "@/app/income";
 
-export function IncomeForm() {
-  const [date, setDate] = useState<string>(new Date().toISOString().split("T")[0])
-  const [isRecurring, setIsRecurring] = useState(false)
+interface IncomeFormProps {
+  initialData?: {
+    id?: string;
+    source?: string;
+    amount?: number;
+    date?: string;
+    notes?: string;
+  };
+}
+
+export function IncomeForm({ initialData }: IncomeFormProps) {
+  const [date, setDate] = useState<string>(
+    initialData?.date || new Date().toISOString().split("T")[0]
+  );
 
   return (
-    <div className="space-y-4 py-2 pb-4">
+    <form className="space-y-4 py-2 pb-4">
       <div className="space-y-2">
-        <Label htmlFor="name">Income Source</Label>
-        <Input id="name" placeholder="Salary, Freelance work, etc." />
+        <Label htmlFor="source">Income Source</Label>
+        <Input
+          id="source"
+          name="source"
+          placeholder="Salary, Freelance work, etc."
+          defaultValue={initialData?.source}
+          required
+        />
       </div>
       <div className="space-y-2">
         <Label htmlFor="amount">Amount</Label>
         <div className="relative">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
-          <Input id="amount" type="number" step="0.01" min="0" className="pl-7" placeholder="0.00" />
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+            $
+          </span>
+          <Input
+            id="amount"
+            name="amount"
+            type="number"
+            step="0.01"
+            min="0"
+            className="pl-7"
+            placeholder="0.00"
+            defaultValue={initialData?.amount}
+            required
+          />
         </div>
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="category">Category</Label>
-        <Select>
-          <SelectTrigger id="category">
-            <SelectValue placeholder="Select category" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="salary">Salary</SelectItem>
-            <SelectItem value="freelance">Freelance</SelectItem>
-            <SelectItem value="investments">Investments</SelectItem>
-            <SelectItem value="rental">Rental Income</SelectItem>
-            <SelectItem value="gifts">Gifts</SelectItem>
-            <SelectItem value="other">Other</SelectItem>
-          </SelectContent>
-        </Select>
       </div>
       <div className="space-y-2">
         <Label htmlFor="date">Date Received</Label>
-        <Input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+        <Input
+          id="date"
+          name="date"
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          required
+        />
       </div>
-      <div className="flex items-center space-x-2">
-        <Switch id="recurring" checked={isRecurring} onCheckedChange={setIsRecurring} />
-        <Label htmlFor="recurring">Recurring Income</Label>
-      </div>
-      {isRecurring && (
-        <div className="space-y-2">
-          <Label htmlFor="frequency">Frequency</Label>
-          <Select>
-            <SelectTrigger id="frequency">
-              <SelectValue placeholder="Select frequency" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="weekly">Weekly</SelectItem>
-              <SelectItem value="biweekly">Bi-weekly</SelectItem>
-              <SelectItem value="monthly">Monthly</SelectItem>
-              <SelectItem value="quarterly">Quarterly</SelectItem>
-              <SelectItem value="annually">Annually</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      )}
       <div className="space-y-2">
         <Label htmlFor="notes">Notes (Optional)</Label>
-        <Textarea id="notes" placeholder="Add any additional details here..." />
+        <Textarea
+          id="notes"
+          name="notes"
+          placeholder="Add any additional details here..."
+          defaultValue={initialData?.notes}
+        />
       </div>
       <DialogFooter>
-        <Button type="submit">Save Income</Button>
+        <Button type="submit" formAction={createIncome}>
+          Save Income
+        </Button>
       </DialogFooter>
-    </div>
-  )
+    </form>
+  );
 }

@@ -1,7 +1,24 @@
-import { Banknote, Briefcase, DollarSign, MoreHorizontal, PiggyBank, Repeat } from "lucide-react"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Banknote,
+  Briefcase,
+  DollarSign,
+  Edit,
+  MoreHorizontal,
+  PiggyBank,
+  Repeat,
+  Trash,
+} from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,93 +26,53 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog";
+import { IncomeForm } from "./income-form";
+import { deleteIncome } from "@/app/income";
 
 interface IncomeListProps {
-  filter?: "recent" | "recurring"
+  filter?: "highest" | "lowest";
+  incomeEntries: any[] | null;
 }
 
-export function IncomeList({ filter }: IncomeListProps = {}) {
-  // This would normally come from a database
-  const incomeEntries = [
-    {
-      id: 1,
-      source: "Monthly Salary",
-      amount: 3500.0,
-      date: "Apr 25, 2025",
-      category: "Salary",
-      icon: Briefcase,
-      iconColor: "text-blue-600",
-      bgColor: "bg-blue-100 dark:bg-blue-900/20",
-      isRecurring: true,
-      frequency: "Monthly",
-    },
-    {
-      id: 2,
-      source: "Freelance Project",
-      amount: 850.0,
-      date: "Apr 20, 2025",
-      category: "Freelance",
-      icon: DollarSign,
-      iconColor: "text-green-600",
-      bgColor: "bg-green-100 dark:bg-green-900/20",
-      isRecurring: false,
-    },
-    {
-      id: 3,
-      source: "Dividend Payment",
-      amount: 125.5,
-      date: "Apr 15, 2025",
-      category: "Investments",
-      icon: PiggyBank,
-      iconColor: "text-purple-600",
-      bgColor: "bg-purple-100 dark:bg-purple-900/20",
-      isRecurring: true,
-      frequency: "Quarterly",
-    },
-    {
-      id: 4,
-      source: "Apartment Rental",
-      amount: 1200.0,
-      date: "Apr 10, 2025",
-      category: "Rental Income",
-      icon: Banknote,
-      iconColor: "text-amber-600",
-      bgColor: "bg-amber-100 dark:bg-amber-900/20",
-      isRecurring: true,
-      frequency: "Monthly",
-    },
-    {
-      id: 5,
-      source: "Tax Refund",
-      amount: 750.0,
-      date: "Apr 5, 2025",
-      category: "Other",
-      icon: DollarSign,
-      iconColor: "text-green-600",
-      bgColor: "bg-green-100 dark:bg-green-900/20",
-      isRecurring: false,
-    },
-  ]
+export function IncomeList({ filter, incomeEntries }: IncomeListProps) {
+  const [openDialog, setOpenDialog] = useState<{
+    id: string;
+    type: "edit" | "view" | "delete";
+  } | null>(null);
 
-  // Apply filters if needed
-  let filteredIncome = [...incomeEntries]
-  if (filter === "recent") {
-    filteredIncome = incomeEntries.slice(0, 3)
-  } else if (filter === "recurring") {
-    filteredIncome = incomeEntries.filter((income) => income.isRecurring)
+  if (!incomeEntries) {
+    return <div className="text-red-500">No income entries found.</div>;
   }
+
+  let filteredIncome = [...incomeEntries];
+  if (filter === "highest") {
+    filteredIncome.sort((a, b) => b.amount - a.amount);
+  } else if (filter === "lowest") {
+    filteredIncome.sort((a, b) => a.amount - b.amount);
+  }
+
+  console.log("Income Entries:", incomeEntries);
+  console.log("Filtered Income:", filteredIncome);
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Income History</CardTitle>
         <CardDescription>
-          {filter === "recent"
-            ? "Your most recent income entries"
-            : filter === "recurring"
-              ? "Your recurring income sources"
-              : "A complete list of your income"}
+          {filter === "highest"
+            ? "Your highest income entries"
+            : filter === "lowest"
+            ? "Your lowest income sources"
+            : "A complete list of your income"}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -103,27 +80,18 @@ export function IncomeList({ filter }: IncomeListProps = {}) {
           {filteredIncome.map((income) => (
             <div key={income.id} className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <div className={`rounded-full ${income.bgColor} p-2`}>
-                  <income.icon className={`h-4 w-4 ${income.iconColor}`} />
-                </div>
                 <div>
                   <div className="flex items-center gap-2">
                     <p className="font-medium">{income.source}</p>
-                    {income.isRecurring && (
-                      <span className="flex items-center text-xs text-muted-foreground">
-                        <Repeat className="mr-1 h-3 w-3" />
-                        {income.frequency}
-                      </span>
-                    )}
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    {income.date} · {income.category}
-                  </p>
+                  <p className="text-sm text-muted-foreground">{income.date}</p>
                 </div>
               </div>
               <div className="flex items-center space-x-4">
                 <div className="text-right">
-                  <p className="font-medium text-green-600">+${income.amount.toFixed(2)}</p>
+                  <p className="font-medium text-green-600">
+                    +${income.amount.toFixed(2)}
+                  </p>
                 </div>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -134,17 +102,123 @@ export function IncomeList({ filter }: IncomeListProps = {}) {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuItem>Edit income</DropdownMenuItem>
-                    <DropdownMenuItem>View details</DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() =>
+                        setOpenDialog({ id: income.id, type: "edit" })
+                      }
+                    >
+                      <Edit className="mr-2 h-4 w-4" />
+                      Edit
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() =>
+                        setOpenDialog({ id: income.id, type: "view" })
+                      }
+                    >
+                      <MoreHorizontal className="mr-2 h-4 w-4" />
+                      View Details
+                    </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="text-destructive">Delete income</DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() =>
+                        setOpenDialog({ id: income.id, type: "delete" })
+                      }
+                      className="text-destructive"
+                    >
+                      <Trash className="mr-2 h-4 w-4" />
+                      Delete
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
+
+              <Dialog
+                open={
+                  openDialog?.id === income.id && openDialog?.type === "edit"
+                }
+                onOpenChange={(open) => {
+                  if (!open) setOpenDialog(null);
+                }}
+              >
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Edit Income</DialogTitle>
+                    <DialogDescription>
+                      Update the details of your income below.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <IncomeForm initialData={income} />
+                </DialogContent>
+              </Dialog>
+
+              <Dialog
+                open={
+                  openDialog?.id === income.id && openDialog?.type === "view"
+                }
+                onOpenChange={(open) => {
+                  if (!open) setOpenDialog(null);
+                }}
+              >
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Income Details</DialogTitle>
+                    <DialogDescription>
+                      Here are more details about this income
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-2">
+                    <p>
+                      <strong>Source:</strong> {income.source}
+                    </p>
+                    <p>
+                      <strong>Date:</strong> ${income.date}
+                    </p>
+                    <p>
+                      <strong>Amount:</strong> ${income.amount?.toFixed(2)}
+                    </p>
+                    <p>
+                      <strong>Notes:</strong>{" "}
+                      {income.notes || "No notes provided."}
+                    </p>
+                  </div>
+                </DialogContent>
+              </Dialog>
+
+              <Dialog
+                open={
+                  openDialog?.id === income.id && openDialog?.type === "delete"
+                }
+                onOpenChange={(open) => {
+                  if (!open) setOpenDialog(null);
+                }}
+              >
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Confirm Deletion</DialogTitle>
+                    <DialogDescription>
+                      Are you sure you want to delete this income?
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="flex justify-end space-x-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => setOpenDialog(null)}
+                    >
+                      Cancel
+                    </Button>
+                    <form action={deleteIncome}>
+                      <input type="hidden" name="id" value={income.id} />
+                      <Button type="submit" variant="destructive">
+                        Delete
+                      </Button>
+                    </form>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
           ))}
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

@@ -25,6 +25,13 @@ export default async function IncomePage() {
   if (!user) {
     return redirect("/login");
   }
+
+  const { data: income } = await supabase
+    .from("income")
+    .select("*")
+    .order("date", { ascending: false })
+    .eq("user_id", user.id);
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col justify-between space-y-2 md:flex-row md:items-center md:space-y-0">
@@ -58,17 +65,17 @@ export default async function IncomePage() {
       <Tabs defaultValue="all" className="space-y-4">
         <TabsList>
           <TabsTrigger value="all">All Income</TabsTrigger>
-          <TabsTrigger value="recent">Recent</TabsTrigger>
-          <TabsTrigger value="recurring">Recurring</TabsTrigger>
+          <TabsTrigger value="highest">Highest</TabsTrigger>
+          <TabsTrigger value="lowest">Lowest</TabsTrigger>
         </TabsList>
         <TabsContent value="all" className="space-y-4">
-          <IncomeList />
+          <IncomeList incomeEntries={income} />
         </TabsContent>
-        <TabsContent value="recent" className="space-y-4">
-          <IncomeList filter="recent" />
+        <TabsContent value="highest" className="space-y-4">
+          <IncomeList filter="highest" incomeEntries={income} />
         </TabsContent>
-        <TabsContent value="recurring" className="space-y-4">
-          <IncomeList filter="recurring" />
+        <TabsContent value="lowest" className="space-y-4">
+          <IncomeList filter="lowest" incomeEntries={income} />
         </TabsContent>
       </Tabs>
     </div>

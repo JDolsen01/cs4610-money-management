@@ -18,6 +18,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { ExpenseForm } from "@/components/expense-form";
+import { IncomeForm } from "@/components/income-form";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -44,6 +45,16 @@ export default async function DashboardPage() {
     .eq("user_id", user.id)
     .limit(4);
 
+  const { data: income } = await supabase
+    .from("income")
+    .select("*")
+    .order("date", { ascending: false })
+    .eq("user_id", user.id)
+    .limit(4);
+
+  const { data: totalIncome } = await supabase.rpc("sum_income_amount", {});
+  const { data: totalExpenses } = await supabase.rpc("sum_expenses_amount", {});
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col justify-between space-y-2 md:flex-row md:items-center md:space-y-0">
@@ -54,12 +65,24 @@ export default async function DashboardPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" asChild>
-            <Link href="/dashboard/income">
-              <Plus className="mr-2 h-4 w-4" />
-              Add Income
-            </Link>
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <Plus className="mr-2 h-4 w-4" />
+                Add Income
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Add New Income</DialogTitle>
+                <DialogDescription>
+                  Enter the details of your income below.
+                </DialogDescription>
+              </DialogHeader>
+              <IncomeForm />
+            </DialogContent>
+          </Dialog>
+
           <Dialog>
             <DialogTrigger asChild>
               <Button>
@@ -80,7 +103,10 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      <FinancialSummary />
+      <FinancialSummary
+        totalExpenses={totalExpenses}
+        totalIncome={totalIncome}
+      />
 
       <div className="my-8">
         <BudgetCategoryOverview budgetCategories={budgetCategories} />
@@ -94,12 +120,12 @@ export default async function DashboardPage() {
         </TabsList>
         <TabsContent value="transactions" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
-            <RecentIncome />
+            <RecentIncome income={income} />
             <RecentExpenses expenses={expenses} />
           </div>
         </TabsContent>
         <TabsContent value="income" className="space-y-4">
-          <RecentIncome />
+          <RecentIncome income={income} />
         </TabsContent>
         <TabsContent value="expenses" className="space-y-4">
           <RecentExpenses expenses={expenses} />

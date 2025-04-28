@@ -42,6 +42,7 @@ export function ExpenseForm({ initialData, budgets }: ExpenseFormProps) {
           name="name"
           placeholder="Grocery shopping"
           defaultValue={initialData?.name}
+          required
         />
       </div>
       <div className="space-y-2">
