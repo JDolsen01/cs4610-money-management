@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -33,11 +33,12 @@ export function BudgetCategoryList({
   budgetCategories,
   filter,
 }: BudgetCategoryListProps) {
+  const [openDialogId, setOpenDialogId] = useState<string | null>(null);
+
   if (!budgetCategories) {
     return <div className="text-red-500">No budget categories found.</div>;
   }
 
-  // Apply filters if needed
   let filteredCategories = [...budgetCategories];
   if (filter === "active") {
     filteredCategories = budgetCategories.filter((category) => category.active);
@@ -59,6 +60,7 @@ export function BudgetCategoryList({
                 />
                 <CardTitle className="text-lg">{category.name}</CardTitle>
               </div>
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon">
@@ -66,44 +68,35 @@ export function BudgetCategoryList({
                     <span className="sr-only">Open menu</span>
                   </Button>
                 </DropdownMenuTrigger>
-                <Dialog>
-                  <DropdownMenuContent>
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DialogTrigger asChild>
-                      <DropdownMenuItem>
-                        <Edit className="mr-2 h-4 w-4" />
-                        Edit category
-                      </DropdownMenuItem>
-                    </DialogTrigger>
-                    <DropdownMenuItem>View expenses</DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem className="text-destructive" asChild>
-                      <form action={deleteBudget}>
-                        <input type="hidden" name="id" value={category.id} />
-                        <Button
-                          type="submit"
-                          variant="ghost"
-                          className="w-full text-left"
-                        >
-                          <Trash className="mr-2 h-4 w-4" />
-                          Delete category
-                        </Button>
-                      </form>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                  <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                      <DialogTitle>Edit Budget Category</DialogTitle>
-                      <DialogDescription>
-                        Update the details of your budget category.
-                      </DialogDescription>
-                    </DialogHeader>
-                    <BudgetCategoryForm initialData={category} />
-                  </DialogContent>
-                </Dialog>
+
+                <DropdownMenuContent>
+                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                  <DropdownMenuItem
+                    onClick={() => setOpenDialogId(category.id)}
+                  >
+                    <Edit className="mr-2 h-4 w-4" />
+                    Edit category
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>View expenses</DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="text-destructive" asChild>
+                    <form action={deleteBudget}>
+                      <input type="hidden" name="id" value={category.id} />
+                      <Button
+                        type="submit"
+                        variant="ghost"
+                        className="w-full text-left"
+                      >
+                        <Trash className="mr-2 h-4 w-4" />
+                        Delete category
+                      </Button>
+                    </form>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
               </DropdownMenu>
             </div>
           </CardHeader>
+
           <CardContent>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
@@ -133,6 +126,23 @@ export function BudgetCategoryList({
               </div>
             </div>
           </CardContent>
+
+          <Dialog
+            open={openDialogId === category.id}
+            onOpenChange={(open) => {
+              if (!open) setOpenDialogId(null);
+            }}
+          >
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Edit Budget Category</DialogTitle>
+                <DialogDescription>
+                  Update the details of your budget category.
+                </DialogDescription>
+              </DialogHeader>
+              <BudgetCategoryForm initialData={category} />
+            </DialogContent>
+          </Dialog>
         </Card>
       ))}
     </div>
