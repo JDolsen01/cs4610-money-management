@@ -17,6 +17,8 @@ export function FinancialSummary({
   totalIncome,
   totalExpenses,
 }: FinancialSummaryProps) {
+  totalIncome = totalIncome || 0;
+  totalExpenses = totalExpenses || 0;
   return (
     <div className="space-y-4">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -62,7 +64,13 @@ export function FinancialSummary({
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div
+              className={`text-2xl font-bold ${
+                totalIncome - totalExpenses >= 0
+                  ? "text-green-600"
+                  : "text-red-600"
+              }`}
+            >
               ${(totalIncome - totalExpenses).toFixed(2)}
             </div>
             {/* <div className="flex items-center text-xs text-muted-foreground">
