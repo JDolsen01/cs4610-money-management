@@ -25,6 +25,18 @@ export default async function RecurringExpensesPage() {
   if (!user) {
     return redirect("/login");
   }
+
+  const { data: budgetCategories } = await supabase
+    .from("budgets")
+    .select("id, name")
+    .eq("user_id", (await supabase.auth.getUser()).data.user?.id);
+
+  const { data: recurringExpenses } = await supabase
+    .from("recurring")
+    .select("*, budget(id, name, color)")
+    .order("due", { ascending: true })
+    .eq("user_id", user.id);
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col justify-between space-y-2 md:flex-row md:items-center md:space-y-0">
@@ -51,26 +63,29 @@ export default async function RecurringExpensesPage() {
                   Enter the details of your recurring expense below.
                 </DialogDescription>
               </DialogHeader>
-              <RecurringExpenseForm />
+              <RecurringExpenseForm budgets={budgetCategories} />
             </DialogContent>
           </Dialog>
         </div>
       </div>
 
-      <Tabs defaultValue="active" className="space-y-4">
+      <Tabs defaultValue="upcoming" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="active">Active</TabsTrigger>
           <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
-          <TabsTrigger value="all">All</TabsTrigger>
+          <TabsTrigger value="late">Late</TabsTrigger>
         </TabsList>
-        <TabsContent value="active" className="space-y-4">
-          <RecurringExpenseList filter="active" />
-        </TabsContent>
         <TabsContent value="upcoming" className="space-y-4">
-          <RecurringExpenseList filter="upcoming" />
+          <RecurringExpenseList
+            recurringExpenses={recurringExpenses}
+            budgets={budgetCategories}
+          />
         </TabsContent>
-        <TabsContent value="all" className="space-y-4">
-          <RecurringExpenseList />
+        <TabsContent value="late" className="space-y-4">
+          <RecurringExpenseList
+            filter="late"
+            recurringExpenses={recurringExpenses}
+            budgets={budgetCategories}
+          />
         </TabsContent>
       </Tabs>
     </div>

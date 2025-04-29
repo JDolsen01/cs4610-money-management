@@ -2,6 +2,21 @@ import { createClient } from "@/utils/supabase/client";
 
 const supabase = createClient();
 
+export async function getExpenses() {
+  const { data, error } = await supabase
+    .from("expenses")
+    .select("*, budget(name, color)")
+    .eq("user_id", (await supabase.auth.getUser()).data.user?.id)
+    .order("date", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching expenses:", error.message);
+    return [];
+  }
+
+  return data;
+}
+
 export async function createExpense(formData: FormData) {
   const name = formData.get("name")?.toString();
   const amount = formData.get("amount");
