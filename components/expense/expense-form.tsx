@@ -27,13 +27,28 @@ interface ExpenseFormProps {
   budgets?: { id: string; name: string }[] | null;
 }
 
-export function ExpenseForm({ initialData, budgets }: ExpenseFormProps) {
+export function ExpenseForm({
+  initialData,
+  budgets,
+  onSubmit,
+}: ExpenseFormProps & { onSubmit: () => void }) {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    if (initialData) {
+      await updateExpense(formData); // Call your API or logic to update expense
+    } else {
+      await createExpense(formData); // Call your API or logic to create expense
+    }
+    onSubmit(); // Trigger parent callback
+  };
+
   const [date, setDate] = useState<string>(
     initialData?.date || new Date().toISOString().split("T")[0]
   );
 
   return (
-    <form className="space-y-4 py-2 pb-4">
+    <form className="space-y-4 py-2 pb-4" onSubmit={handleSubmit}>
       <input type="hidden" name="id" defaultValue={initialData?.id} />
       <div className="space-y-2">
         <Label htmlFor="name">Expense Name</Label>
@@ -101,12 +116,7 @@ export function ExpenseForm({ initialData, budgets }: ExpenseFormProps) {
         />
       </div>
       <DialogFooter>
-        <Button
-          type="submit"
-          formAction={initialData ? updateExpense : createExpense}
-        >
-          Save Expense
-        </Button>
+        <Button type="submit">Save Expense</Button>
       </DialogFooter>
     </form>
   );

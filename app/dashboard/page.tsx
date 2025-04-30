@@ -17,7 +17,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ExpenseForm } from "@/components/expense-form";
+import { ExpenseForm } from "@/components/expense/expense-form";
 import { IncomeForm } from "@/components/income-form";
 
 export default async function DashboardPage() {
