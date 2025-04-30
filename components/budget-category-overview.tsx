@@ -44,22 +44,29 @@ export function BudgetCategoryOverview({
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">
-                    ${category.spent} of ${category.budget}
+                    ${category.total_spent} of ${category.budget}
                   </span>
                   <span
                     className={`font-medium ${
-                      category.spent > category.budget ? "text-red-500" : ""
+                      category.total_spent > category.budget
+                        ? "text-red-500"
+                        : ""
                     }`}
                   >
-                    {category.percentSpent}%
+                    {((category.total_spent / category.budget) * 100).toFixed(
+                      1
+                    )}
+                    %
                   </span>
                 </div>
                 <Progress
                   value={
-                    category.percentSpent > 100 ? 100 : category.percentSpent
+                    (category.total_spent / category.budget) * 100 > 100
+                      ? 100
+                      : (category.total_spent / category.budget) * 100
                   }
                   className={`h-2 ${
-                    category.spent > category.budget ? "bg-red-200" : ""
+                    category.total_spent > category.budget ? "bg-red-200" : ""
                   }`}
                 />
               </div>

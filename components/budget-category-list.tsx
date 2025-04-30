@@ -47,7 +47,7 @@ export function BudgetCategoryList({
     filteredCategories = budgetCategories.filter((category) => category.active);
   } else if (filter === "overspent") {
     filteredCategories = budgetCategories.filter(
-      (category) => category.isOverspent
+      (category) => category.total_spent > category.budget
     );
   }
 
@@ -110,17 +110,18 @@ export function BudgetCategoryList({
               <div className="flex justify-between text-sm">
                 <span>Budget: ${category.budget?.toFixed(2)}</span>
                 <span>
-                  Spent: ${category.spent?.toFixed(2)} ({category.percentSpent}
-                  %)
+                  {((category.total_spent / category.budget) * 100).toFixed(1)}%
                 </span>
               </div>
               <Progress
                 value={
-                  category.percentSpent > 100 ? 100 : category.percentSpent
+                  (category.total_spent / category.budget) * 100 > 100
+                    ? 100
+                    : (category.total_spent / category.budget) * 100
                 }
                 className={`h-2 ${category.isOverspent ? "bg-red-200" : ""}`}
               />
-              <div className="flex justify-between text-sm">
+              <div className="flex justify-between text-sm text-muted-foreground">
                 <span>Remaining:</span>
                 <span
                   className={
@@ -129,7 +130,7 @@ export function BudgetCategoryList({
                       : "font-medium"
                   }
                 >
-                  ${(category.budget - category.spent).toFixed(2)}
+                  ${(category.budget - category.total_spent).toFixed(2)}
                 </span>
               </div>
             </div>
@@ -173,7 +174,7 @@ export function BudgetCategoryList({
                   <strong>Budget:</strong> ${category.budget?.toFixed(2)}
                 </p>
                 <p>
-                  <strong>Spent:</strong> ${category.spent?.toFixed(2)}
+                  <strong>Spent:</strong> ${category.total_spent?.toFixed(2)}
                 </p>
                 <p>
                   <strong>Notes:</strong>{" "}

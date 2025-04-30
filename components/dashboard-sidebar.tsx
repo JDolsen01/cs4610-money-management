@@ -61,21 +61,6 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
       href: "/dashboard/budgets",
       icon: Wallet,
     },
-    {
-      title: "Savings",
-      href: "/dashboard/savings",
-      icon: PiggyBank,
-    },
-    {
-      title: "Reports",
-      href: "/dashboard/reports",
-      icon: BarChart3,
-    },
-    {
-      title: "Settings",
-      href: "/dashboard/settings",
-      icon: Settings,
-    },
   ];
 
   return (

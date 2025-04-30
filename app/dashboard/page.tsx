@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { useState } from "react";
 import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -35,8 +35,9 @@ export default async function DashboardPage() {
     .from("budgets")
     .select("*")
     .order("budget", { ascending: true })
-    .eq("user_id", user.id)
-    .limit(4);
+    .eq("user_id", user.id);
+
+  const { data: budgetTotals } = await supabase.rpc("get_budget_totals", {});
 
   const { data: expenses } = await supabase
     .from("expenses")
@@ -109,7 +110,7 @@ export default async function DashboardPage() {
       />
 
       <div className="my-8">
-        <BudgetCategoryOverview budgetCategories={budgetCategories} />
+        <BudgetCategoryOverview budgetCategories={budgetTotals} />
       </div>
 
       <Tabs defaultValue="transactions" className="space-y-4">

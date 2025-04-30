@@ -31,10 +31,6 @@ export function FinancialSummary({
             <div className="text-2xl font-bold text-green-600">
               ${totalIncome.toFixed(2)}
             </div>
-            <div className="flex items-center text-xs text-muted-foreground">
-              <ArrowUpRight className="mr-1 h-3 w-3 text-green-600" />
-              <span className="text-green-600">+12.5%</span> from last month
-            </div>
           </CardContent>
         </Card>
         <Card>
@@ -47,10 +43,6 @@ export function FinancialSummary({
           <CardContent>
             <div className="text-2xl font-bold text-red-600">
               -${totalExpenses.toFixed(2)}
-            </div>
-            <div className="flex items-center text-xs text-muted-foreground">
-              <ArrowDownRight className="mr-1 h-3 w-3 text-red-600" />
-              <span className="text-red-600">-4.5%</span> from last month
             </div>
           </CardContent>
         </Card>
@@ -98,7 +90,7 @@ export function FinancialSummary({
                 <span className="text-muted-foreground">Income</span>
               </div>
               <Progress
-                value={100 - (totalIncome / totalExpenses) * 100}
+                value={(totalExpenses / totalIncome) * 100}
                 className="h-2"
               />
             </div>

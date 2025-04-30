@@ -26,10 +26,10 @@ export default async function BudgetsPage() {
     return redirect("/login");
   }
 
-  const { data: budgetCategories } = await supabase
-    .from("budgets")
-    .select("*")
-    .eq("user_id", (await supabase.auth.getUser()).data.user?.id);
+  const { data: budgetCategories } = await supabase.rpc(
+    "get_budget_totals",
+    {}
+  );
 
   return (
     <div className="space-y-8">

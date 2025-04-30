@@ -73,9 +73,7 @@ export function RecurringExpenseForm({
         </div>
       </div>
       <div className="space-y-2">
-        <Label htmlFor="budget">
-          Budget Category {initialData?.budget.id.toString()}
-        </Label>
+        <Label htmlFor="budget">Budget Category</Label>
         <Select name="budget">
           <SelectTrigger id="budget">
             <SelectValue placeholder="Select Budget" />
