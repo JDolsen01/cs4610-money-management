@@ -62,9 +62,15 @@ export function RecurringExpenseList({
   let filteredExpenses = [...recurringExpenses];
   if (filter === "late") {
     filteredExpenses = recurringExpenses
-      .filter((expense) => expense.dueDate < new Date())
+      .filter((expense) => new Date(expense.due) < new Date())
       .sort((a) => a.dueDate);
   }
+  const daysUntilDue = (dueDate: string) => {
+    const due = new Date(dueDate);
+    const today = new Date();
+    const diffTime = due.getTime() - today.getTime();
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  };
 
   return (
     <Card>
@@ -84,7 +90,7 @@ export function RecurringExpenseList({
                 <div>
                   <p className="font-medium">{expense.name}</p>
                   <p className="text-sm text-muted-foreground">
-                    Next due: {expense.dueDate} · {expense.frequency}
+                    Next due: {expense.due} · {expense.frequency}
                   </p>
                 </div>
               </div>
@@ -92,10 +98,10 @@ export function RecurringExpenseList({
                 <div className="text-right">
                   <p className="font-medium">${expense.amount.toFixed(2)}</p>
                   <p className="text-xs text-muted-foreground">
-                    {expense.daysUntilDue <= 3 ? (
+                    {daysUntilDue(expense.due) <= 3 ? (
                       <span className="text-red-500">Due soon</span>
                     ) : (
-                      `Due in ${expense.daysUntilDue} days`
+                      `Due in ${daysUntilDue(expense.due)} days`
                     )}
                   </p>
                 </div>
