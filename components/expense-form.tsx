@@ -20,7 +20,7 @@ interface ExpenseFormProps {
     id?: string;
     name?: string;
     amount?: number;
-    category?: string;
+    category?: any;
     date: string;
     notes?: string;
   };
@@ -70,7 +70,7 @@ export function ExpenseForm({ initialData, budgets }: ExpenseFormProps) {
           <SelectTrigger id="category">
             <SelectValue placeholder="Select budget category" />
           </SelectTrigger>
-          <SelectContent defaultValue={initialData?.category}>
+          <SelectContent defaultValue={initialData?.category.id}>
             {budgets?.map((budget) => (
               <SelectItem key={budget.name + initialData?.id} value={budget.id}>
                 {budget.name}

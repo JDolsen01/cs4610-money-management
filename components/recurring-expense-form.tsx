@@ -24,7 +24,7 @@ interface RecurringExpenseFormProps {
     id?: string;
     name?: string;
     amount?: number;
-    budget?: string;
+    budget?: any;
     frequency?: string;
     dueDate?: string;
     notes?: string;
@@ -73,12 +73,14 @@ export function RecurringExpenseForm({
         </div>
       </div>
       <div className="space-y-2">
-        <Label htmlFor="budget">Budget Category</Label>
+        <Label htmlFor="budget">
+          Budget Category {initialData?.budget.id.toString()}
+        </Label>
         <Select name="budget">
           <SelectTrigger id="budget">
             <SelectValue placeholder="Select Budget" />
           </SelectTrigger>
-          <SelectContent defaultValue={initialData?.budget}>
+          <SelectContent defaultValue={initialData?.budget.id}>
             {budgets?.map((budget) => (
               <SelectItem key={budget.name + initialData?.id} value={budget.id}>
                 {budget.name}

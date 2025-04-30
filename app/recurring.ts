@@ -116,7 +116,7 @@ export async function markReoccuringExpenseAsPaid(formData: FormData) {
   // Update the expense as paid by incrementing the due date
   const { error: updateError } = await supabase
     .from("recurring")
-    .update({ date: dueDate })
+    .update({ due: dueDate })
     .eq("id", expenseId)
     .eq("user_id", (await supabase.auth.getUser()).data.user?.id);
 
@@ -125,7 +125,7 @@ export async function markReoccuringExpenseAsPaid(formData: FormData) {
       "Error marking reoccuring expense as paid:",
       updateError.message
     );
-    return false;
+    return;
   }
 
   // Create a new expense record for the paid reoccuring expense
@@ -145,10 +145,7 @@ export async function markReoccuringExpenseAsPaid(formData: FormData) {
       "Error creating expense for paid reoccuring expense:",
       insertError.message
     );
-    return false;
   }
-
-  return true;
 }
 
 export async function deleteReoccuringExpense(formData: FormData) {

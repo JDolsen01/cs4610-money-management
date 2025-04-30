@@ -34,7 +34,10 @@ import {
   DialogTitle,
 } from "./ui/dialog";
 import { RecurringExpenseForm } from "./recurring-expense-form";
-import { deleteReoccuringExpense } from "@/app/recurring";
+import {
+  deleteReoccuringExpense,
+  markReoccuringExpenseAsPaid,
+} from "@/app/recurring";
 
 interface RecurringExpenseListProps {
   filter?: "late" | "upcoming" | "active";
@@ -49,7 +52,7 @@ export function RecurringExpenseList({
 }: RecurringExpenseListProps) {
   const [openDialog, setOpenDialog] = useState<{
     id: string;
-    type: "edit" | "view" | "delete";
+    type: "edit" | "view" | "complete" | "delete";
   } | null>(null);
 
   if (!recurringExpenses) {
@@ -115,6 +118,14 @@ export function RecurringExpenseList({
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={() =>
+                        setOpenDialog({ id: expense.id, type: "complete" })
+                      }
+                    >
+                      <CreditCard className="mr-2 h-4 w-4" />
+                      Mark as Paid
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() =>
                         setOpenDialog({ id: expense.id, type: "view" })
                       }
                     >
@@ -154,6 +165,55 @@ export function RecurringExpenseList({
                     initialData={expense}
                     budgets={budgets}
                   />
+                </DialogContent>
+              </Dialog>
+
+              <Dialog
+                open={
+                  openDialog?.id === expense.id &&
+                  openDialog?.type === "complete"
+                }
+                onOpenChange={(open) => {
+                  if (!open) setOpenDialog(null);
+                }}
+              >
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Mark Expense as Paid</DialogTitle>
+                    <DialogDescription>
+                      Are you sure you want to mark this expense as paid?
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="flex justify-end space-x-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => setOpenDialog(null)}
+                    >
+                      Cancel
+                    </Button>
+                    <form action={markReoccuringExpenseAsPaid}>
+                      <input type="hidden" name="id" value={expense.id} />
+                      <input type="hidden" name="name" value={expense.name} />
+                      <input
+                        type="hidden"
+                        name="amount"
+                        value={expense.amount}
+                      />
+                      <input type="hidden" name="due" value={expense.due} />
+                      <input
+                        type="hidden"
+                        name="frequency"
+                        value={expense.frequency}
+                      />
+                      <input
+                        type="hidden"
+                        name="budget"
+                        value={expense.budget.id}
+                      />
+                      <input type="hidden" name="notes" value={expense.notes} />
+                      <Button type="submit">Mark as Paid</Button>
+                    </form>
+                  </div>
                 </DialogContent>
               </Dialog>
 
