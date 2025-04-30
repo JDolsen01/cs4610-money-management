@@ -71,8 +71,8 @@ export async function updateExpense(formData: FormData) {
   return data[0];
 }
 
-export async function deleteExpense(formData: FormData) {
-  const expenseId = formData.get("id")?.toString();
+export async function deleteExpense(FormData: FormData) {
+  const expenseId = FormData.get("id")?.toString();
   const { error } = await supabase
     .from("expenses")
     .delete()

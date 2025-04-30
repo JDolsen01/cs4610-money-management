@@ -27,6 +27,7 @@ import {
 import { ExpenseForm } from "./expense-form";
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import { deleteExpense } from "@/app/expenses";
+import { createClient } from "@/utils/supabase/client";
 
 interface ExpenseListProps {
   filter?: "recent" | "highest" | "lowest";
@@ -34,15 +35,25 @@ interface ExpenseListProps {
   budgets: any[] | null;
 }
 
-export function ExpenseList({ filter, expenses, budgets }: ExpenseListProps) {
+export function ExpenseList({
+  filter,
+  expenses: initialExpenses,
+  budgets,
+}: ExpenseListProps) {
+  const [expenses, setExpenses] = useState(initialExpenses || []); // State for expenses
   const [openDialog, setOpenDialog] = useState<{
     id: string;
     type: "edit" | "view" | "delete";
   } | null>(null);
 
-  if (!expenses) {
-    return <div className="text-red-500">No recent expenses found.</div>;
-  }
+  const refreshExpenses = async () => {
+    const supabase = createClient();
+    const { data: updatedExpenses } = await supabase
+      .from("expenses")
+      .select("*, budget(name, color)")
+      .order("date", { ascending: false });
+    setExpenses(updatedExpenses || []);
+  };
 
   let filteredExpenses = [...expenses];
   if (filter === "highest") {
@@ -150,7 +161,14 @@ export function ExpenseList({ filter, expenses, budgets }: ExpenseListProps) {
                       Update the details of your expense below.
                     </DialogDescription>
                   </DialogHeader>
-                  <ExpenseForm initialData={expense} budgets={budgets} />
+                  <ExpenseForm
+                    initialData={expense}
+                    budgets={budgets}
+                    onSubmit={async () => {
+                      setOpenDialog(null); // Close dialog
+                      await refreshExpenses(); // Refresh expenses
+                    }}
+                  />
                 </DialogContent>
               </Dialog>
 
@@ -209,7 +227,22 @@ export function ExpenseList({ filter, expenses, budgets }: ExpenseListProps) {
                     >
                       Cancel
                     </Button>
-                    <form action={deleteExpense}>
+                    <form
+                      action={async () => {
+                        const supabase = createClient();
+                        const { error } = await supabase
+                          .from("expenses")
+                          .delete()
+                          .eq("id", expense.id)
+                          .eq(
+                            "user_id",
+                            (
+                              await supabase.auth.getUser()
+                            ).data.user?.id
+                          );
+                        await refreshExpenses(); // Refresh expenses
+                      }}
+                    >
                       <input type="hidden" name="id" value={expense.id} />
                       <Button type="submit" variant="destructive">
                         Delete

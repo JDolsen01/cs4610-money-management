@@ -5,7 +5,6 @@ const supabase = createClient();
 export async function createBudget(formData: FormData) {
   const name = formData.get("name")?.toString();
   const budget = formData.get("budget")?.toString();
-  const spent = 0;
   const color = formData.get("color")?.toString();
   const notes = formData.get("notes")?.toString();
 
@@ -14,7 +13,6 @@ export async function createBudget(formData: FormData) {
     .insert({
       name,
       budget: budget ? parseFloat(budget) : null,
-      spent,
       color,
       notes,
       user_id: (await supabase.auth.getUser()).data.user?.id,

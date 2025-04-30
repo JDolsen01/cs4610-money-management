@@ -21,8 +21,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Progress } from "@/components/ui/progress";
-import { BudgetCategoryForm } from "./budget-category-form";
-import { deleteBudget } from "@/app/budgets";
+import { BudgetCategoryForm } from "@/components/budget/budget-category-form";
+import { createClient } from "@/utils/supabase/client";
 
 interface BudgetCategoryListProps {
   budgetCategories: any[] | null;
@@ -30,23 +30,29 @@ interface BudgetCategoryListProps {
 }
 
 export function BudgetCategoryList({
-  budgetCategories,
+  budgetCategories: initialBudgetCategories,
   filter,
 }: BudgetCategoryListProps) {
+  const [categories, setCategories] = useState(initialBudgetCategories || []); // State for budget categories
   const [openDialog, setOpenDialog] = useState<{
     id: string;
     type: "edit" | "view" | "delete";
   } | null>(null);
 
-  if (!budgetCategories) {
-    return <div className="text-red-500">No budget categories found.</div>;
-  }
+  const refreshCategories = async () => {
+    const supabase = createClient();
+    const { data: updatedCategories } = await supabase.rpc(
+      "get_budget_totals",
+      {}
+    );
+    setCategories(updatedCategories || []);
+  };
 
-  let filteredCategories = [...budgetCategories];
+  let filteredCategories = [...categories];
   if (filter === "active") {
-    filteredCategories = budgetCategories.filter((category) => category.active);
+    filteredCategories = categories.filter((category) => category.active);
   } else if (filter === "overspent") {
-    filteredCategories = budgetCategories.filter(
+    filteredCategories = categories.filter(
       (category) => category.total_spent > category.budget
     );
   }
@@ -149,7 +155,13 @@ export function BudgetCategoryList({
                   Update the details of your budget category.
                 </DialogDescription>
               </DialogHeader>
-              <BudgetCategoryForm initialData={category} />
+              <BudgetCategoryForm
+                initialData={category}
+                onSubmit={async () => {
+                  setOpenDialog(null); // Close dialog
+                  await refreshCategories(); // Refresh categories
+                }}
+              />
             </DialogContent>
           </Dialog>
 
@@ -203,7 +215,24 @@ export function BudgetCategoryList({
                 <Button variant="outline" onClick={() => setOpenDialog(null)}>
                   Cancel
                 </Button>
-                <form action={deleteBudget}>
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    const supabase = createClient();
+                    await supabase
+                      .from("budgets")
+                      .delete()
+                      .eq("id", category.id)
+                      .eq(
+                        "user_id",
+                        (
+                          await supabase.auth.getUser()
+                        ).data.user?.id
+                      );
+                    setOpenDialog(null); // Close dialog
+                    await refreshCategories(); // Refresh categories
+                  }}
+                >
                   <input type="hidden" name="id" value={category.id} />
                   <Button type="submit" variant="destructive">
                     Delete

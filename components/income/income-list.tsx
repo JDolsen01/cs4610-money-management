@@ -1,15 +1,7 @@
 "use client";
 
-import {
-  Banknote,
-  Briefcase,
-  DollarSign,
-  Edit,
-  MoreHorizontal,
-  PiggyBank,
-  Repeat,
-  Trash,
-} from "lucide-react";
+import { useState } from "react";
+import { Edit, MoreHorizontal, Trash } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -27,31 +19,41 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "./ui/dialog";
-import { IncomeForm } from "./income-form";
-import { deleteIncome } from "@/app/income";
+} from "@/components/ui/dialog";
+import { IncomeForm } from "@/components/income/income-form";
+import { createClient } from "@/utils/supabase/client";
 
 interface IncomeListProps {
   filter?: "highest" | "lowest";
   incomeEntries: any[] | null;
 }
 
-export function IncomeList({ filter, incomeEntries }: IncomeListProps) {
+export function IncomeList({
+  filter,
+  incomeEntries: initialIncomeEntries,
+}: IncomeListProps) {
+  const [incomeEntries, setIncomeEntries] = useState(
+    initialIncomeEntries || []
+  ); // State for income entries
   const [openDialog, setOpenDialog] = useState<{
     id: string;
     type: "edit" | "view" | "delete";
   } | null>(null);
 
-  if (!incomeEntries) {
-    return <div className="text-red-500">No income entries found.</div>;
-  }
+  const refreshIncome = async () => {
+    const supabase = createClient();
+    const { data: updatedIncome } = await supabase
+      .from("income")
+      .select("*")
+      .order("date", { ascending: false });
+    setIncomeEntries(updatedIncome || []);
+  };
 
   let filteredIncome = [...incomeEntries];
   if (filter === "highest") {
@@ -59,9 +61,6 @@ export function IncomeList({ filter, incomeEntries }: IncomeListProps) {
   } else if (filter === "lowest") {
     filteredIncome.sort((a, b) => a.amount - b.amount);
   }
-
-  console.log("Income Entries:", incomeEntries);
-  console.log("Filtered Income:", filteredIncome);
 
   return (
     <Card>
@@ -147,7 +146,13 @@ export function IncomeList({ filter, incomeEntries }: IncomeListProps) {
                       Update the details of your income below.
                     </DialogDescription>
                   </DialogHeader>
-                  <IncomeForm initialData={income} />
+                  <IncomeForm
+                    initialData={income}
+                    onSubmit={async () => {
+                      setOpenDialog(null); // Close dialog
+                      await refreshIncome(); // Refresh income list
+                    }}
+                  />
                 </DialogContent>
               </Dialog>
 
@@ -206,7 +211,18 @@ export function IncomeList({ filter, incomeEntries }: IncomeListProps) {
                     >
                       Cancel
                     </Button>
-                    <form action={deleteIncome}>
+                    <form
+                      onSubmit={async (e) => {
+                        e.preventDefault();
+                        const supabase = createClient();
+                        await supabase
+                          .from("income")
+                          .delete()
+                          .eq("id", income.id);
+                        setOpenDialog(null); // Close dialog
+                        await refreshIncome(); // Refresh income list
+                      }}
+                    >
                       <input type="hidden" name="id" value={income.id} />
                       <Button type="submit" variant="destructive">
                         Delete

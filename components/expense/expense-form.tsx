@@ -85,7 +85,11 @@ export function ExpenseForm({
           <SelectTrigger id="category">
             <SelectValue placeholder="Select budget category" />
           </SelectTrigger>
-          <SelectContent defaultValue={initialData?.category.id}>
+          <SelectContent
+            defaultValue={
+              initialData?.category?.id ? initialData.category.id : "NULL"
+            }
+          >
             {budgets?.map((budget) => (
               <SelectItem key={budget.name + initialData?.id} value={budget.id}>
                 {budget.name}

@@ -17,9 +17,23 @@ interface BudgetCategoryFormProps {
   };
 }
 
-export function BudgetCategoryForm({ initialData }: BudgetCategoryFormProps) {
+export function BudgetCategoryForm({
+  initialData,
+  onSubmit,
+}: BudgetCategoryFormProps & { onSubmit: () => void }) {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    if (initialData) {
+      await updateBudget(formData); // Call your API or logic to update expense
+    } else {
+      await createBudget(formData); // Call your API or logic to create expense
+    }
+    onSubmit(); // Trigger parent callback
+  };
+
   return (
-    <form className="space-y-4 py-2 pb-4">
+    <form className="space-y-4 py-2 pb-4" onSubmit={handleSubmit}>
       <input type="hidden" name="id" defaultValue={initialData?.id} />
       <div className="space-y-2">
         <Label htmlFor="name">Category Name</Label>
@@ -84,12 +98,7 @@ export function BudgetCategoryForm({ initialData }: BudgetCategoryFormProps) {
         />
       </div>
       <DialogFooter>
-        <Button
-          type="submit"
-          formAction={initialData ? updateBudget : createBudget}
-        >
-          Save Category
-        </Button>
+        <Button type="submit">Save Category</Button>
       </DialogFooter>
     </form>
   );
