@@ -16,8 +16,7 @@ export default async function IncomePage() {
   const { data: income } = await supabase
     .from("income")
     .select("*")
-    .order("date", { ascending: false })
-    .eq("user_id", user.id);
+    .order("date", { ascending: false });
 
   return <IncomeClient initialIncome={income || []} />;
 }

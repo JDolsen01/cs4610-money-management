@@ -17,14 +17,12 @@ export default async function ExpensesPage() {
   // Fetch data
   const { data: budgetCategories } = await supabase
     .from("budgets")
-    .select("id, name")
-    .eq("user_id", user.id);
+    .select("id, name");
 
   const { data: expenses } = await supabase
     .from("expenses")
     .select("*, budget(name, color)")
-    .order("date", { ascending: false })
-    .eq("user_id", user.id);
+    .order("date", { ascending: false });
 
   return (
     <ExpensesClient

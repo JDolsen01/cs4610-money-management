@@ -52,10 +52,12 @@ export function IncomeForm({
         <Label htmlFor="amount">Amount</Label>
         <Input
           id="amount"
-          type="number"
           name="amount"
-          defaultValue={initialData?.amount}
+          type="number"
+          step="0.01"
+          min="0"
           placeholder="e.g., 5000"
+          defaultValue={initialData?.amount}
           required
         />
       </div>

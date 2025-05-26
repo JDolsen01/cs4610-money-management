@@ -28,14 +28,12 @@ export default async function RecurringExpensesPage() {
 
   const { data: budgetCategories } = await supabase
     .from("budgets")
-    .select("id, name")
-    .eq("user_id", (await supabase.auth.getUser()).data.user?.id);
+    .select("id, name");
 
   const { data: recurringExpenses } = await supabase
     .from("recurring")
     .select("*, budget(id, name, color)")
-    .order("due", { ascending: true })
-    .eq("user_id", user.id);
+    .order("due", { ascending: true });
 
   return (
     <div className="space-y-8">

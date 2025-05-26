@@ -66,7 +66,7 @@ export function RecurringExpenseForm({
             step="0.01"
             min="0"
             className="pl-7"
-            placeholder="0.00"
+            placeholder="e.g., 5000"
             defaultValue={initialData?.amount}
             required
           />

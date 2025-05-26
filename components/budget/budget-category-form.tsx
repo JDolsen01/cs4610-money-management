@@ -53,12 +53,12 @@ export function BudgetCategoryForm({
           <Input
             id="budget-amount"
             name="budget"
-            defaultValue={initialData?.budget}
             type="number"
             step="0.01"
             min="0"
             className="pl-7"
-            placeholder="0.00"
+            placeholder="e.g., 5000"
+            defaultValue={initialData?.budget}
             required
           />
         </div>
